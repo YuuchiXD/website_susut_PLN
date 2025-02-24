@@ -45,29 +45,61 @@
                     </select>
                 </div>
                 <div class="mb-3">
-                    <label for="bulan" class="form-label">Bulan</label>
-                    <select class="form-select" id="bulan" required>
-                        <option value="0">Januari</option>
-                        <option value="1">Februari</option>
-                        <option value="2">Maret</option>
-                        <option value="3">April</option>
-                        <option value="4">Mei</option>
-                        <option value="5">Juni</option>
-                        <option value="6">Juli</option>
-                        <option value="7">Agustus</option>
-                        <option value="8">September</option>
-                        <option value="9">Oktober</option>
-                        <option value="10">November</option>
-                        <option value="11">Desember</option>
-                    </select>
-                </div>
-                <div class="mb-3">
                     <label for="tahun" class="form-label">Tahun</label>
                     <input type="number" class="form-control" id="tahun" required>
                 </div>
                 <div class="mb-3">
-                    <label for="jumlah_susut" class="form-label">Jumlah Susut (MW)</label>
-                    <input type="number" step="0.01" class="form-control" id="jumlah_susut" required>
+                    <label class="form-label">Jumlah Susut (MW) per Bulan</label>
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label for="januari" class="form-label">Januari</label>
+                            <input type="number" step="0.01" class="form-control" id="januari">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="februari" class="form-label">Februari</label>
+                            <input type="number" step="0.01" class="form-control" id="februari">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="maret" class="form-label">Maret</label>
+                            <input type="number" step="0.01" class="form-control" id="maret">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="april" class="form-label">April</label>
+                            <input type="number" step="0.01" class="form-control" id="april">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="mei" class="form-label">Mei</label>
+                            <input type="number" step="0.01" class="form-control" id="mei">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="juni" class="form-label">Juni</label>
+                            <input type="number" step="0.01" class="form-control" id="juni">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="juli" class="form-label">Juli</label>
+                            <input type="number" step="0.01" class="form-control" id="juli">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="agustus" class="form-label">Agustus</label>
+                            <input type="number" step="0.01" class="form-control" id="agustus">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="september" class="form-label">September</label>
+                            <input type="number" step="0.01" class="form-control" id="september">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="oktober" class="form-label">Oktober</label>
+                            <input type="number" step="0.01" class="form-control" id="oktober">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="november" class="form-label">November</label>
+                            <input type="number" step="0.01" class="form-control" id="november">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="desember" class="form-label">Desember</label>
+                            <input type="number" step="0.01" class="form-control" id="desember">
+                        </div>
+                    </div>
                 </div>
                 <div class="text-center mt-3">
                     <button type="submit" class="btn btn-primary">Tambah Data</button>
@@ -77,21 +109,35 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="pln-susut/styles/scripts/input.js"></script>
     <script>
         document.getElementById('susutForm').addEventListener('submit', function(event) {
             event.preventDefault();
             const ulp = document.getElementById('ulp').value;
-            const bulan = document.getElementById('bulan').value;
             const tahun = document.getElementById('tahun').value;
-            const jumlahSusut = parseFloat(document.getElementById('jumlah_susut').value);
+            const bulanData = [
+                { bulan: 0, jumlahSusut: parseFloat(document.getElementById('januari').value) || 0 },
+                { bulan: 1, jumlahSusut: parseFloat(document.getElementById('februari').value) || 0 },
+                { bulan: 2, jumlahSusut: parseFloat(document.getElementById('maret').value) || 0 },
+                { bulan: 3, jumlahSusut: parseFloat(document.getElementById('april').value) || 0 },
+                { bulan: 4, jumlahSusut: parseFloat(document.getElementById('mei').value) || 0 },
+                { bulan: 5, jumlahSusut: parseFloat(document.getElementById('juni').value) || 0 },
+                { bulan: 6, jumlahSusut: parseFloat(document.getElementById('juli').value) || 0 },
+                { bulan: 7, jumlahSusut: parseFloat(document.getElementById('agustus').value) || 0 },
+                { bulan: 8, jumlahSusut: parseFloat(document.getElementById('september').value) || 0 },
+                { bulan: 9, jumlahSusut: parseFloat(document.getElementById('oktober').value) || 0 },
+                { bulan: 10, jumlahSusut: parseFloat(document.getElementById('november').value) || 0 },
+                { bulan: 11, jumlahSusut: parseFloat(document.getElementById('desember').value) || 0 }
+            ];
 
-            const data = { ulp, tanggal: new Date(tahun, bulan).toISOString(), jumlahSusut };
             let susutData = JSON.parse(localStorage.getItem('susutData')) || [];
-            susutData.push(data);
+            bulanData.forEach(data => {
+                if (data.jumlahSusut > 0) {
+                    susutData.push({ ulp, tanggal: new Date(tahun, data.bulan).toISOString(), jumlahSusut: data.jumlahSusut });
+                }
+            });
             localStorage.setItem('susutData', JSON.stringify(susutData));
 
-            window.location.href = 'grafik-susut.html';
+            window.location.href = `tahun-susut.html?tahun=${tahun}`;
         });
     </script>
 </body>

@@ -30,12 +30,24 @@
         .btn-primary:hover {
             background: linear-gradient(135deg, #2575fc, #6a11cb);
         }
+        .btn-secondary {
+            background: #6c757d;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 25px;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
     </style>
 </head>
 <body>
     <div class="card">
         <h1 class="mb-4">📅 Pilih Tahun Susut</h1>
         <select id="tahunSelect" class="form-select mb-4">
+            <option value="2025">2025</option>
             <option value="2024">2024</option>
             <option value="2023">2023</option>
             <option value="2022">2022</option>
@@ -45,13 +57,31 @@
             <option value="2018">2018</option>
             <option value="2017">2017</option>
         </select>
-        <button id="lihatData" class="btn btn-primary">Lihat Data Susut</button>
+        <button id="lihatData" class="btn btn-primary mb-4">Lihat Data Susut</button>
+        
+        <h2 class="mb-4">Tambah Tahun Baru</h2>
+        <input type="number" id="tahunBaru" class="form-control mb-3" placeholder="Masukkan Tahun Baru">
+        <button id="tambahTahun" class="btn btn-secondary">Tambah Tahun</button>
     </div>
 
     <script>
         document.getElementById('lihatData').addEventListener('click', function() {
             const tahun = document.getElementById('tahunSelect').value;
             window.location.href = `tahun-susut.html?tahun=${tahun}`;
+        });
+
+        document.getElementById('tambahTahun').addEventListener('click', function() {
+            const tahunBaru = document.getElementById('tahunBaru').value;
+            if (tahunBaru && !document.querySelector(`#tahunSelect option[value="${tahunBaru}"]`)) {
+                const option = document.createElement('option');
+                option.value = tahunBaru;
+                option.textContent = tahunBaru;
+                document.getElementById('tahunSelect').appendChild(option);
+                document.getElementById('tahunBaru').value = '';
+                alert(`Tahun ${tahunBaru} berhasil ditambahkan!`);
+            } else {
+                alert('Tahun sudah ada atau tidak valid!');
+            }
         });
     </script>
 </body>
