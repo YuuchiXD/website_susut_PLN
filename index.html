@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PLN Susut</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <style>
+    .bg-pln { background-color: #007AC2; }
+    .text-pln { color: #FFD700; }
+    .btn-pln { background-color: #FFD700; color: #007AC2; }
+    .btn-pln:hover { background-color: #ffcc00; }
+    .marquee {
+      white-space: nowrap;
+      overflow: hidden;
+      display: block;
+      position: absolute;
+      top: 20px;
+      animation: marquee 10s linear infinite;
+    }
+    @keyframes marquee {
+      from { transform: translateX(100%); }
+      to { transform: translateX(-100%); }
+    }
+    .slideshow-container img {
+      display: none;
+      width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: opacity 1s ease-in-out;
+    }
+    .slideshow-container img.active {
+      display: block;
+      opacity: 1;
+    }
+    .text-box {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(240, 240, 240, 0.9));
+      padding: 20px;
+      margin: 15px auto;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      max-width: 800px;
+      text-align: center;
+      font-size: 1.2em;
+      color: #333;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    .animate-pop-in {
+      animation: popIn 0.8s ease-out forwards;
+    }
+    .delay-1 { animation-delay: 0.3s; }
+    .delay-2 { animation-delay: 0.6s; }
+    @keyframes popIn {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .text-box:hover {
+      transform: scale(1.02);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .gradient-text {
+      background: linear-gradient(90deg, #007AC2, #FFD700);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: bold;
+    }
+    .shadow-text {
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    /* Modal Styling */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+    }
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    }
+    .modal.active, .modal-overlay.active {
+      display: block;
+    }
+  </style>
+</head>
+<body class="text-gray-900">
+  <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: url('pln-susut/styles/scripts/assets/latarpln.png'); background-size: cover; background-position: center; filter: blur(5px); z-index: -1;"></div>
+  
+  <!-- Modal Selamat Datang Admin -->
+  <div id="welcome-modal" class="modal">
+    <div class="text-center">
+      <h2 class="gradient-text shadow-text text-3xl mb-4">Selamat Datang, Admin!</h2>
+      <p class="text-gray-700">Anda telah login sebagai admin. Selamat bekerja!</p>
+      <button id="close-modal-btn" class="btn-pln px-4 py-2 rounded-md font-bold shadow-md hover:bg-yellow-500 transition-colors mt-4">Tutup</button>
+    </div>
+  </div>
+  <div id="modal-overlay" class="modal-overlay"></div>
+
+  <header class="bg-pln text-white p-4 flex justify-between items-center shadow-md">
+    <div class="flex items-center space-x-4">
+      <img src="pln-susut/styles/scripts/assets/logo_pln.png" alt="PLN Logo" class="w-12 h-12"/>
+      <nav class="hidden md:flex space-x-6">
+        <a href="index.html" class="btn-pln px-4 py-2 rounded-md font-bold shadow-md hover:bg-yellow-500 transition-colors">Home</a>
+        <a href="susut.html" class="btn-pln px-4 py-2 rounded-md font-bold shadow-md hover:bg-yellow-500 transition-colors">Susut</a>
+      </nav>
+    </div>
+    <div class="flex items-center space-x-4">
+      <!-- Tombol Login/Logout -->
+      <a id="login-logout-btn" href="login.html" class="btn-pln px-4 py-2 rounded-md font-bold shadow-md hover:bg-yellow-500 transition-colors">Login</a>
+    </div>
+  </header>
+
+  <main class="relative w-full h-screen flex flex-col items-center justify-center">
+ 
+    <div class="text-box animate-pop-in">
+      <h1 class="gradient-text shadow-text text-4xl mb-4">Selamat Datang di Sistem Susut PLN!</h1>
+      <p class="text-gray-700">Sistem ini dirancang untuk memantau dan menganalisis data susut energi listrik secara real-time.</p>
+    </div>
+    <div class="text-box animate-pop-in delay-1">
+      <h2 class="gradient-text shadow-text text-3xl mb-4">Transparan dan Akurat</h2>
+      <p class="text-gray-700">Dikelola langsung oleh PT. PLN UP3 Lubuk Pakam, Divisi Transaksi Energi Listrik.</p>
+    </div>
+    <div class="text-box animate-pop-in delay-2">
+      <h2 class="gradient-text shadow-text text-3xl mb-4">Monitoring & Analisis</h2>
+      <p class="text-gray-700">Sebagai media untuk monitoring dan analisis data susut kelistrikan.</p>
+    </div>
+
+  </main>
+
+  <footer class="bg-pln text-white text-center py-6 mt-10">
+    <div class="container mx-auto">
+      <p class="text-sm mb-4">&copy; 2025 PROJECT MAGANG UINSU - PLN UP3 LUBUK PAKAM.</p>
+      <ul class="flex justify-center space-x-6 mb-4">
+        <li><a href="#" class="hover:text-yellow-400 transition-colors"><i class="fab fa-facebook-f"></i></a></li>
+        <li><a href="#" class="hover:text-yellow-400 transition-colors"><i class="fab fa-twitter"></i></a></li>
+        <li><a href="#" class="hover:text-yellow-400 transition-colors"><i class="fab fa-instagram"></i></a></li>
+        <li><a href="#" class="hover:text-yellow-400 transition-colors"><i class="fab fa-linkedin-in"></i></a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+      const loginLogoutBtn = document.getElementById('login-logout-btn');
+      const welcomeModal = document.getElementById('welcome-modal');
+      const modalOverlay = document.getElementById('modal-overlay');
+      const closeModalBtn = document.getElementById('close-modal-btn');
+
+      if (isLoggedIn) {
+        loginLogoutBtn.textContent = 'Logout';
+        loginLogoutBtn.href = '#';
+        loginLogoutBtn.addEventListener('click', function() {
+          localStorage.setItem('isLoggedIn', 'false');
+          window.location.href = 'index.html';
+        });
+        welcomeModal.classList.add('active');
+        modalOverlay.classList.add('active');
+      } else {
+        loginLogoutBtn.textContent = 'Login';
+        loginLogoutBtn.href = 'login.html';
+      }
+
+      closeModalBtn.addEventListener('click', function() {
+        welcomeModal.classList.remove('active');
+        modalOverlay.classList.remove('active');
+      });
+    });
+  </script>
+</body>
+</html>

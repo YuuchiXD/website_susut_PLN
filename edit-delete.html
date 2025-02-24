@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit atau Hapus Data Susut PLN</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            padding: 20px;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        h1 {
+            color: #2575fc;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .btn-back {
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 25px;
+            color: white;
+            margin-bottom: 2rem;
+        }
+        .btn-back:hover {
+            background: linear-gradient(135deg, #2575fc, #6a11cb);
+        }
+        .nav-link.active {
+            font-weight: bold;
+            color: #FFD700 !important;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">PLN</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="grafik-susut.html">Grafik</a></li>
+                    <li class="nav-item" id="inputNavItem" style="display: none;">
+                        <a class="nav-link" href="create.html">INPUT</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="edit-delete.html">Edit/Hapus</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Tombol Kembali ke Pilih Tahun -->
+    <div class="container mt-4 text-center">
+        <button onclick="window.location.href='susut.html'" class="btn btn-back">Pilih Tahun Lain</button>
+    </div>
+
+    <!-- Konten Utama -->
+    <div class="container mt-4">
+        <h2 class="text-center">📋 Edit atau Hapus Data Susut</h2>
+        
+        <!-- Filter Tabel -->
+        <div class="mb-3">
+            <label for="tableFilter" class="form-label">Pilih ULP/UP:</label>
+            <select class="form-select" id="tableFilter">
+                <option value="all">Semua</option>
+                <option value="ULP Tanjung Morawa">ULP Tanjung Morawa</option>
+                <option value="ULP Galang">ULP Galang</option>
+                <option value="ULP Dolok Masihul">ULP Dolok Masihul</option>
+                <option value="ULP Pakam Kota">ULP Pakam Kota</option>
+                <option value="ULP Sei Rampah">ULP Sei Rampah</option>
+                <option value="ULP Perbaungan">ULP Perbaungan</option>
+                <option value="UP3 Pakam">UP3 Lubuk Pakam</option>
+            </select>
+        </div>
+
+        <table class="table table-hover table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>ULP/UP</th>
+                    <th>JAN</th>
+                    <th>FEB</th>
+                    <th>MAR</th>
+                    <th>APR</th>
+                    <th>MEI</th>
+                    <th>JUN</th>
+                    <th>JUL</th>
+                    <th>AGT</th>
+                    <th>SEP</th>
+                    <th>OKT</th>
+                    <th>NOV</th>
+                    <th>DES</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="dataTableBody"></tbody>
+        </table>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Ambil data dari localStorage
+        let susutData = JSON.parse(localStorage.getItem('susutData')) || [];
+
+        // Tampilkan data di tabel
+        const tableBody = document.getElementById('dataTableBody');
+        function renderTable(filter = 'all') {
+            const ulpData = {};
+            susutData.forEach((data, index) => {
+                if (filter === 'all' || data.ulp === filter) {
+                    const bulan = new Date(data.tanggal).getMonth();
+                    if (!ulpData[data.ulp]) {
+                        ulpData[data.ulp] = Array(12).fill(0);
+                    }
+                    ulpData[data.ulp][bulan] += data.jumlahSusut;
+                }
+            });
+
+            tableBody.innerHTML = '';
+            for (const ulp in ulpData) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${ulp}</td>
+                    ${ulpData[ulp].map(jumlah => `<td>${jumlah}</td>`).join('')}
+                    <td>
+                        <button class="btn btn-sm btn-primary" onclick="editData('${ulp}')">Edit</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteData('${ulp}')">Hapus</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            }
+        }
+
+        function editData(ulp) {
+            const bulan = prompt("Masukkan bulan (1-12) untuk mengedit data:");
+            if (bulan !== null && bulan >= 1 && bulan <= 12) {
+                const dataToEdit = susutData.find(data => data.ulp === ulp && new Date(data.tanggal).getMonth() === (bulan - 1));
+                if (dataToEdit) {
+                    const newJumlahSusut = prompt(`Masukkan jumlah susut baru untuk ${ulp} pada bulan ${bulan}:`, dataToEdit.jumlahSusut);
+                    if (newJumlahSusut !== null) {
+                        dataToEdit.jumlahSusut = parseFloat(newJumlahSusut);
+                        localStorage.setItem('susutData', JSON.stringify(susutData));
+                        renderTable(document.getElementById('tableFilter').value);
+                    }
+                }
+            }
+        }
+
+        function deleteData(ulp) {
+            const bulan = prompt("Masukkan bulan (1-12) untuk menghapus data:");
+            if (bulan !== null && bulan >= 1 && bulan <= 12) {
+                susutData = susutData.filter(data => !(data.ulp === ulp && new Date(data.tanggal).getMonth() === (bulan - 1)));
+                localStorage.setItem('susutData', JSON.stringify(susutData));
+                renderTable(document.getElementById('tableFilter').value);
+            }
+        }
+
+        document.getElementById('tableFilter').addEventListener('change', function() {
+            renderTable(this.value);
+        });
+
+        renderTable();
+    </script>
+</body>
+</html>
