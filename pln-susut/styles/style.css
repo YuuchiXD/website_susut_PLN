@@ -34,3 +34,19 @@ body {
     background-color: #343a40;
     color: #ffffff;
 }
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .chart-container, .table-container {
+        padding: 10px;
+    }
+
+    .table {
+        font-size: 0.9em;
+    }
+
+    .btn-back {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}

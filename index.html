@@ -18,6 +18,7 @@
       position: absolute;
       top: 20px;
       animation: marquee 10s linear infinite;
+      width: 100%;
     }
     @keyframes marquee {
       from { transform: translateX(100%); }
@@ -84,6 +85,8 @@
       border-radius: 10px;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
       z-index: 1000;
+      width: 90%;
+      max-width: 400px;
     }
     .modal-overlay {
       display: none;
@@ -120,6 +123,10 @@
         <a href="index.html" class="btn-pln px-4 py-2 rounded-md font-bold shadow-md hover:bg-yellow-500 transition-colors">Home</a>
         <a href="susut.html" class="btn-pln px-4 py-2 rounded-md font-bold shadow-md hover:bg-yellow-500 transition-colors">Susut</a>
       </nav>
+      <nav class="md:hidden flex flex-col space-y-2">
+        <a href="index.html" class="btn-pln px-4 py-2 rounded-md font-bold shadow-md hover:bg-yellow-500 transition-colors">Home</a>
+        <a href="susut.html" class="btn-pln px-4 py-2 rounded-md font-bold shadow-md hover:bg-yellow-500 transition-colors">Susut</a>
+      </nav>
     </div>
     <div class="flex items-center space-x-4">
       <!-- Tombol Login/Logout -->
@@ -127,7 +134,7 @@
     </div>
   </header>
 
-  <main class="relative w-full h-screen flex flex-col items-center justify-center">
+  <main class="relative w-full h-screen flex flex-col items-center justify-center px-4">
  
     <div class="text-box animate-pop-in">
       <h1 class="gradient-text shadow-text text-4xl mb-4">Selamat Datang di Sistem Susut PLN!</h1>

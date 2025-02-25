@@ -32,6 +32,12 @@
             border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 1400px; /* Increase the maximum width */
+            margin: 0 auto; /* Center the table */
+            display: block;
+            overflow-x: auto;
+            padding: 30px; /* Increase padding to ensure it doesn't touch the edges */
         }
         .table thead {
             background: linear-gradient(135deg, #6a11cb, #2575fc);
@@ -53,6 +59,17 @@
             font-weight: bold;
             color: #FFD700 !important;
         }
+        @media (max-width: 768px) {
+            .table {
+                font-size: 0.8rem;
+            }
+            .btn-back {
+                font-size: 0.9rem;
+            }
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
     </style>
 </head>
 <body class="bg-light">
@@ -60,7 +77,10 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
         <div class="container">
             <a class="navbar-brand fw-bold" href="#">PLN</a>
-            <div class="collapse navbar-collapse">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
                     <li class="nav-item"><a class="nav-link active" href="kumulatif-susut.html">Kumulatif</a></li>
@@ -72,7 +92,7 @@
 
     <!-- Tombol Kembali ke Pilih Tahun -->
     <div class="container mt-4 text-center">
-        <button onclick="window.location.href='susut.html'" class="btn btn-back">Pilih Tahun Lain</button>
+        <button onclick="window.location.href='susut.html'" class="btn btn-back w-100 mb-2">Pilih Tahun Lain</button>
     </div>
 
     <!-- Konten Utama -->
@@ -116,13 +136,13 @@
         </table>
 
         <!-- Grafik -->
-        <div class="chart-container mt-5">
+        <div class="chart-container mt-5" style="position: relative; height:40vh; width:80vw">
             <canvas id="susutChart"></canvas>
         </div>
 
         <!-- Tombol Input -->
         <div class="text-center mt-4">
-            <a href="create.html" class="btn btn-back">Input Data Baru</a>
+            <a href="create.html" class="btn btn-back w-100">Input Data Baru</a>
         </div>
     </div>
 
