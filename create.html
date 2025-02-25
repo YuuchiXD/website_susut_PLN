@@ -132,7 +132,10 @@
 
             let susutData = JSON.parse(localStorage.getItem('susutData')) || [];
             bulanData.forEach(data => {
-                if (data.jumlahSusut > 0) {
+                const existingDataIndex = susutData.findIndex(item => item.ulp === ulp && new Date(item.tanggal).getFullYear() === parseInt(tahun) && new Date(item.tanggal).getMonth() === data.bulan);
+                if (existingDataIndex !== -1) {
+                    susutData[existingDataIndex].jumlahSusut = data.jumlahSusut;
+                } else if (data.jumlahSusut > 0) {
                     susutData.push({ ulp, tanggal: new Date(tahun, data.bulan).toISOString(), jumlahSusut: data.jumlahSusut });
                 }
             });
