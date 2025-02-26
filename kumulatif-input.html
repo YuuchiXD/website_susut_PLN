@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input Data Kumulatif Susut PLN</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles/styles.css">
+</head>
+<body class="bg-light">
+    <script>
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        if (!isLoggedIn) {
+            alert('Anda harus login terlebih dahulu!');
+            window.location.href = 'index.html';
+        }
+    </script>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">PLN</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+                    <a class="nav-link" href="index.html">Home</a>
+                    <a class="nav-link" href="tahun-susut.html">Tabel Tahun Susut</a>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h1 class="text-center text-primary">Input Data Kumulatif Susut PLN</h1>
+        <div class="form-container bg-white p-4 rounded shadow-sm">
+            <form id="kumulatifForm">
+                <div class="mb-3">
+                    <label for="ulp" class="form-label">ULP/UP</label>
+                    <select class="form-select" id="ulp" required>
+                        <option value="ULP Tanjung Morawa">ULP Tanjung Morawa</option>
+                        <option value="ULP Galang">ULP Galang</option>
+                        <option value="ULP Dolok Masihul">ULP Dolok Masihul</option>
+                        <option value="ULP Pakam Kota">ULP Pakam Kota</option>
+                        <option value="ULP Sei Rampah">ULP Sei Rampah</option>
+                        <option value="ULP Perbaungan">ULP Perbaungan</option>
+                        <option value="UP3 Pakam">UP3 Lubuk Pakam</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="tahun" class="form-label">Tahun</label>
+                    <input type="number" class="form-control" id="tahun" required>
+                </div>
+                <div class="mb-3">
+                    <label for="kumulatifSusut" class="form-label">Jumlah Kumulatif Susut (MW)</label>
+                    <input type="number" step="0.01" class="form-control" id="kumulatifSusut" required>
+                </div>
+                <div class="text-center mt-3">
+                    <button type="submit" class="btn btn-primary">Tambah Data</button>
+                    <button type="button" class="btn btn-secondary" onclick="history.back()">Kembali</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('kumulatifForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const ulp = document.getElementById('ulp').value;
+            const tahun = document.getElementById('tahun').value;
+            const jumlahKumulatif = parseFloat(document.getElementById('kumulatifSusut').value);
+
+            let kumulatifData = JSON.parse(localStorage.getItem('kumulatifData')) || {};
+            if (!kumulatifData[tahun]) {
+                kumulatifData[tahun] = {};
+            }
+            kumulatifData[tahun][ulp] = jumlahKumulatif;
+
+            localStorage.setItem('kumulatifData', JSON.stringify(kumulatifData));
+
+            window.location.href = `kumulatif-susut.html?tahun=${tahun}`;
+        });
+    </script>
+</body>
+</html>
