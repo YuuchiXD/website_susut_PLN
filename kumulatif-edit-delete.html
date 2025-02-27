@@ -223,6 +223,12 @@
 
         // Periksa status login
         const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        const isAdmin = localStorage.getItem('isAdmin') === 'true';
+
+        if (!isLoggedIn || !isAdmin) {
+            alert('Anda tidak memiliki akses untuk halaman ini.');
+            window.location.href = 'index.html';
+        }
 
         // Tampilkan data di tabel
         const tableBody = document.getElementById('dataTableBody');
