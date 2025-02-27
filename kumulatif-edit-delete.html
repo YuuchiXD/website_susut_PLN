@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Susut PLN</title>
+    <title>Edit/Hapus Data Kumulatif Susut PLN</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
@@ -23,21 +22,17 @@
             text-align: center;
             margin-bottom: 2rem;
         }
-        canvas {
-            max-height: 500px;
-            width: 100% !important;
-        }
         .table {
             background: white;
             border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 1400px; /* Increase the maximum width */
-            margin: 0 auto; /* Center the table */
+            max-width: 1200px;
+            margin: 0 auto;
             display: block;
             overflow-x: auto;
-            padding: 30px; /* Increase padding to ensure it doesn't touch the edges */
+            padding: 20px;
         }
         .table thead {
             background: linear-gradient(135deg, #6a11cb, #2575fc);
@@ -60,14 +55,19 @@
             color: #FFD700 !important;
         }
         @media (max-width: 768px) {
-            .table {
-                font-size: 0.8rem;
-            }
-            .btn-back {
-                font-size: 0.9rem;
+            .card {
+                padding: 1rem;
             }
             h1 {
                 font-size: 1.5rem;
+            }
+            .btn-back {
+                padding: 8px 16px;
+                font-size: 0.875rem;
+            }
+            .table {
+                font-size: 0.875rem;
+                padding: 10px;
             }
         }
     </style>
@@ -83,17 +83,12 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="kumulatif-susut.html">Kumulatif</a></li>
-                    <li class="nav-item"><a class="nav-link" href="edit-delete.html">Edit/Hapus</a></li>
+                    <li class="nav-item"><a class="nav-link" href="susut.html">Pilih Tahun</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="kumulatif-edit-delete.html">Edit/Hapus Kumulatif</a></li>
                 </ul>
             </div>
         </div>
     </nav>
-
-    <!-- Tombol Input Data Baru -->
-    <div class="container mt-4 text-center">
-        <a href="create.html" class="btn btn-back w-100 mb-2">Input Data Baru</a>
-    </div>
 
     <!-- Tombol Kembali ke Pilih Tahun -->
     <div class="container mt-4 text-center">
@@ -102,8 +97,7 @@
 
     <!-- Konten Utama -->
     <div class="container mt-4">
-        <h1 class="text-center text-primary">Data Susut PLN Tahun <span id="tahunTitle"></span></h1>
-        <h2 class="text-center">📋 Tabel Data Susut</h2>
+        <h2 class="text-center">📋 Tabel Data Kumulatif Susut</h2>
         
         <!-- Filter Tabel -->
         <div class="mb-3">
@@ -136,19 +130,11 @@
                     <th>OKT</th>
                     <th>NOV</th>
                     <th>DES</th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
             <tbody id="dataTableBody"></tbody>
         </table>
-
-        <!-- Grafik -->
-        <div class="chart-container mt-5" style="position: relative; height:40vh; width:80vw">
-            <canvas id="susutChart"></canvas>
-        </div>
-
-        <div class="text-center mt-3">
-            <button id="lihatKumulatif" class="btn btn-primary">Kumulatif</button>
-        </div>
     </div>
 
     <!-- Tombol Kembali -->
@@ -160,98 +146,55 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Ambil data dari localStorage
-        let susutData = JSON.parse(localStorage.getItem('susutData')) || [];
+        let kumulatifData = JSON.parse(localStorage.getItem('kumulatifData')) || {};
 
         // Ambil parameter tahun dari URL
         const urlParams = new URLSearchParams(window.location.search);
         const tahun = urlParams.get('tahun');
-        document.getElementById('tahunTitle').textContent = tahun;
 
         // Periksa status login
         const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
 
         // Tampilkan data di tabel
         const tableBody = document.getElementById('dataTableBody');
-        const ctx = document.getElementById('susutChart').getContext('2d');
-        let chart;
 
         function renderTable(filter = 'all') {
-            const ulpData = {};
-            susutData.forEach(data => {
-                const dataTahun = new Date(data.tanggal).getFullYear();
-                if ((filter === 'all' || data.ulp === filter) && dataTahun == tahun) {
-                    const bulan = new Date(data.tanggal).getMonth();
-                    if (!ulpData[data.ulp]) {
-                        ulpData[data.ulp] = Array(12).fill(0);
-                    }
-                    ulpData[data.ulp][bulan] = data.jumlahSusut; // Fix: Assign the value directly
-                }
-            });
+            const kumulatifDataForYear = kumulatifData[tahun] || {};
 
             tableBody.innerHTML = '';
-            for (const ulp in ulpData) {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${ulp}</td>
-                    ${ulpData[ulp].map(jumlah => `<td>${jumlah}</td>`).join('')}
-                `;
-                tableBody.appendChild(row);
+            for (const ulp in kumulatifDataForYear) {
+                if (filter === 'all' || ulp === filter) {
+                    const row = document.createElement('tr');
+                    const monthlyData = kumulatifDataForYear[ulp] || {};
+                    row.innerHTML = `
+                        <td>${ulp}</td>
+                        ${Object.values(monthlyData).map(jumlah => `<td>${jumlah}</td>`).join('')}
+                        <td>
+                            <button class="btn btn-warning btn-sm" onclick="editData('${ulp}')">Edit</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteData('${ulp}')">Hapus</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                }
             }
-
-            updateChart(ulpData);
         }
 
-        function updateChart(ulpData) {
-            const datasets = Object.keys(ulpData).map(ulp => ({
-                label: ulp,
-                data: ulpData[ulp],
-                borderColor: `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 1)`,
-                backgroundColor: 'rgba(0, 0, 0, 0.1)',
-                borderWidth: 3,
-                pointBackgroundColor: 'rgba(0, 0, 0, 0.1)',
-                pointRadius: 5,
-                pointHoverRadius: 7,
-                tension: 0.3
-            }));
+        function editData(ulp) {
+            const tahun = urlParams.get('tahun');
+            window.location.href = `kumulatif-input.html?ulp=${ulp}&tahun=${tahun}`;
+        }
 
-            if (chart) {
-                chart.destroy();
+        function deleteData(ulp) {
+            const tahun = urlParams.get('tahun');
+            if (confirm(`Apakah Anda yakin ingin menghapus data kumulatif untuk ${ulp} tahun ${tahun}?`)) {
+                delete kumulatifData[tahun][ulp];
+                localStorage.setItem('kumulatifData', JSON.stringify(kumulatifData));
+                renderTable(document.getElementById('tableFilter').value);
             }
-
-            chart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['JAN', 'FEB', 'MAR', 'APR', 'MEI', 'JUN', 'JUL', 'AGT', 'SEP', 'OKT', 'NOV', 'DES'],
-                    datasets: datasets
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: { title: { display: true, text: 'Bulan' }},
-                        y: { title: { display: true, text: 'Jumlah Susut (MW)' }, beginAtZero: true }
-                    },
-                    plugins: {
-                        legend: { position: 'top' },
-                        tooltip: { enabled: true, mode: 'index', intersect: false },
-                        title: {
-                            display: true,
-                            text: `Grafik Susut PLN Tahun ${tahun}`,
-                            font: {
-                                size: 18
-                            }
-                        }
-                    }
-                }
-            });
         }
 
         document.getElementById('tableFilter').addEventListener('change', function() {
             renderTable(this.value);
-        });
-
-        document.getElementById('lihatKumulatif').addEventListener('click', function() {
-            window.location.href = `kumulatif-susut.html?tahun=${tahun}`;
         });
 
         renderTable();

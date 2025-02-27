@@ -93,7 +93,7 @@
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
                     <li class="nav-item"><a class="nav-link active" href="susut.html">Pilih Tahun</a></li>
-                    <li class="nav-item"><a class="nav-link" href="edit-delete.html">Edit/Hapus</a></li>
+                    <li class="nav-item"><a class="nav-link" href="kumulatif-edit-delete.html">Edit/Hapus Kumulatif</a></li>
                 </ul>
             </div>
         </div>
@@ -144,7 +144,6 @@
                     <th>OKT</th>
                     <th>NOV</th>
                     <th>DES</th>
-                    <th>Kumulatif Susut (MW)</th>
                 </tr>
             </thead>
             <tbody id="dataTableBody"></tbody>
@@ -153,9 +152,6 @@
         <!-- Grafik -->
         <div class="chart-container mt-5">
             <canvas id="susutChart"></canvas>
-        </div>
-        <div class="chart-container mt-5">
-            <canvas id="kumulatifChart"></canvas>
         </div>
     </div>
 
@@ -181,8 +177,7 @@
         // Tampilkan data di tabel
         const tableBody = document.getElementById('dataTableBody');
         const susutCtx = document.getElementById('susutChart').getContext('2d');
-        const kumulatifCtx = document.getElementById('kumulatifChart').getContext('2d');
-        let susutChart, kumulatifChart;
+        let susutChart;
 
         function renderTable(filter = 'all') {
             const ulpData = {};
@@ -201,19 +196,21 @@
 
             tableBody.innerHTML = '';
             for (const ulp in kumulatifDataForYear) {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${ulp}</td>
-                    ${ulpData[ulp] ? ulpData[ulp].map(jumlah => `<td>${jumlah}</td>`).join('') : '<td colspan="12">Data tidak tersedia</td>'}
-                    <td>${kumulatifDataForYear[ulp]}</td>
-                `;
-                tableBody.appendChild(row);
+                if (filter === 'all' || ulp === filter) {
+                    const row = document.createElement('tr');
+                    const monthlyData = ulpData[ulp] || Array(12).fill(0);
+                    row.innerHTML = `
+                        <td>${ulp}</td>
+                        ${monthlyData.map(jumlah => `<td>${jumlah}</td>`).join('')}
+                    `;
+                    tableBody.appendChild(row);
+                }
             }
 
-            updateCharts(ulpData, kumulatifDataForYear);
+            updateCharts(ulpData, kumulatifDataForYear, filter);
         }
 
-        function updateCharts(ulpData, kumulatifData) {
+        function updateCharts(ulpData, kumulatifData, filter) {
             const susutDatasets = Object.keys(ulpData).map(ulp => ({
                 label: ulp,
                 data: ulpData[ulp],
@@ -226,34 +223,39 @@
                 tension: 0.3
             }));
 
-            const kumulatifDatasets = [{
-                label: 'Kumulatif Susut (MW)',
-                data: Object.values(kumulatifData),
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            }];
+            const kumulatifDatasets = Object.keys(kumulatifData).filter(ulp => filter === 'all' || ulp === filter).map((ulp, index) => ({
+                label: `Kumulatif ${ulp}`,
+                data: Object.values(kumulatifData[ulp]),
+                backgroundColor: `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 0.2)`,
+                borderColor: `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 1)`,
+                borderWidth: 1,
+                type: 'bar',
+                yAxisID: 'y1'
+            }));
 
             if (susutChart) {
                 susutChart.destroy();
-            }
-
-            if (kumulatifChart) {
-                kumulatifChart.destroy();
             }
 
             susutChart = new Chart(susutCtx, {
                 type: 'line',
                 data: {
                     labels: ['JAN', 'FEB', 'MAR', 'APR', 'MEI', 'JUN', 'JUL', 'AGT', 'SEP', 'OKT', 'NOV', 'DES'],
-                    datasets: susutDatasets
+                    datasets: [...susutDatasets, ...kumulatifDatasets]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
                         x: { title: { display: true, text: 'Bulan' }},
-                        y: { title: { display: true, text: 'Jumlah Susut (MW)' }, beginAtZero: true }
+                        y: { title: { display: true, text: 'Jumlah Susut (MW)' }, beginAtZero: true },
+                        y1: {
+                            type: 'linear',
+                            position: 'right',
+                            title: { display: true, text: 'Kumulatif Susut (MW)' },
+                            beginAtZero: true,
+                            grid: { drawOnChartArea: false }
+                        }
                     },
                     plugins: {
                         legend: { position: 'top' },
@@ -261,33 +263,6 @@
                         title: {
                             display: true,
                             text: `Grafik Susut PLN Tahun ${tahun}`,
-                            font: {
-                                size: 18
-                            }
-                        }
-                    }
-                }
-            });
-
-            kumulatifChart = new Chart(kumulatifCtx, {
-                type: 'bar',
-                data: {
-                    labels: Object.keys(kumulatifData),
-                    datasets: kumulatifDatasets
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: { title: { display: true, text: 'ULP/UP' }},
-                        y: { title: { display: true, text: 'Jumlah Susut (MW)' }, beginAtZero: true }
-                    },
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: { enabled: true, mode: 'index', intersect: false },
-                        title: {
-                            display: true,
-                            text: `Grafik Kumulatif Susut PLN Tahun ${tahun}`,
                             font: {
                                 size: 18
                             }

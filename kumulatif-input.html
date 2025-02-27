@@ -48,9 +48,55 @@
                     <label for="tahun" class="form-label">Tahun</label>
                     <input type="number" class="form-control" id="tahun" required>
                 </div>
-                <div class="mb-3">
-                    <label for="kumulatifSusut" class="form-label">Jumlah Kumulatif Susut (MW)</label>
-                    <input type="number" step="0.01" class="form-control" id="kumulatifSusut" required>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="kumulatifSusutJan" class="form-label">Januari (MW)</label>
+                        <input type="number" step="0.01" class="form-control" id="kumulatifSusutJan" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="kumulatifSusutFeb" class="form-label">Februari (MW)</label>
+                        <input type="number" step="0.01" class="form-control" id="kumulatifSusutFeb" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="kumulatifSusutMar" class="form-label">Maret (MW)</label>
+                        <input type="number" step="0.01" class="form-control" id="kumulatifSusutMar" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="kumulatifSusutApr" class="form-label">April (MW)</label>
+                        <input type="number" step="0.01" class="form-control" id="kumulatifSusutApr" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="kumulatifSusutMei" class="form-label">Mei (MW)</label>
+                        <input type="number" step="0.01" class="form-control" id="kumulatifSusutMei" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="kumulatifSusutJun" class="form-label">Juni (MW)</label>
+                        <input type="number" step="0.01" class="form-control" id="kumulatifSusutJun" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="kumulatifSusutJul" class="form-label">Juli (MW)</label>
+                        <input type="number" step="0.01" class="form-control" id="kumulatifSusutJul" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="kumulatifSusutAgt" class="form-label">Agustus (MW)</label>
+                        <input type="number" step="0.01" class="form-control" id="kumulatifSusutAgt" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="kumulatifSusutSep" class="form-label">September (MW)</label>
+                        <input type="number" step="0.01" class="form-control" id="kumulatifSusutSep" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="kumulatifSusutOkt" class="form-label">Oktober (MW)</label>
+                        <input type="number" step="0.01" class="form-control" id="kumulatifSusutOkt" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="kumulatifSusutNov" class="form-label">November (MW)</label>
+                        <input type="number" step="0.01" class="form-control" id="kumulatifSusutNov" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="kumulatifSusutDes" class="form-label">Desember (MW)</label>
+                        <input type="number" step="0.01" class="form-control" id="kumulatifSusutDes" required>
+                    </div>
                 </div>
                 <div class="text-center mt-3">
                     <button type="submit" class="btn btn-primary">Tambah Data</button>
@@ -66,13 +112,37 @@
             event.preventDefault();
             const ulp = document.getElementById('ulp').value;
             const tahun = document.getElementById('tahun').value;
-            const jumlahKumulatif = parseFloat(document.getElementById('kumulatifSusut').value);
+            const jumlahKumulatifJan = parseFloat(document.getElementById('kumulatifSusutJan').value);
+            const jumlahKumulatifFeb = parseFloat(document.getElementById('kumulatifSusutFeb').value);
+            const jumlahKumulatifMar = parseFloat(document.getElementById('kumulatifSusutMar').value);
+            const jumlahKumulatifApr = parseFloat(document.getElementById('kumulatifSusutApr').value);
+            const jumlahKumulatifMei = parseFloat(document.getElementById('kumulatifSusutMei').value);
+            const jumlahKumulatifJun = parseFloat(document.getElementById('kumulatifSusutJun').value);
+            const jumlahKumulatifJul = parseFloat(document.getElementById('kumulatifSusutJul').value);
+            const jumlahKumulatifAgt = parseFloat(document.getElementById('kumulatifSusutAgt').value);
+            const jumlahKumulatifSep = parseFloat(document.getElementById('kumulatifSusutSep').value);
+            const jumlahKumulatifOkt = parseFloat(document.getElementById('kumulatifSusutOkt').value);
+            const jumlahKumulatifNov = parseFloat(document.getElementById('kumulatifSusutNov').value);
+            const jumlahKumulatifDes = parseFloat(document.getElementById('kumulatifSusutDes').value);
 
             let kumulatifData = JSON.parse(localStorage.getItem('kumulatifData')) || {};
             if (!kumulatifData[tahun]) {
                 kumulatifData[tahun] = {};
             }
-            kumulatifData[tahun][ulp] = jumlahKumulatif;
+            kumulatifData[tahun][ulp] = {
+                Jan: jumlahKumulatifJan,
+                Feb: jumlahKumulatifFeb,
+                Mar: jumlahKumulatifMar,
+                Apr: jumlahKumulatifApr,
+                Mei: jumlahKumulatifMei,
+                Jun: jumlahKumulatifJun,
+                Jul: jumlahKumulatifJul,
+                Agt: jumlahKumulatifAgt,
+                Sep: jumlahKumulatifSep,
+                Okt: jumlahKumulatifOkt,
+                Nov: jumlahKumulatifNov,
+                Des: jumlahKumulatifDes
+            };
 
             localStorage.setItem('kumulatifData', JSON.stringify(kumulatifData));
 
