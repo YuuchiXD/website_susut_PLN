@@ -93,7 +93,7 @@
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
                     <li class="nav-item"><a class="nav-link active" href="susut.html">Pilih Tahun</a></li>
-                    <li class="nav-item"><a class="nav-link" href="kumulatif-edit-delete.html">Edit/Hapus Kumulatif</a></li>
+                    <li class="nav-item"><a class="nav-link" id="editDeleteLink" href="#">Edit/Hapus Kumulatif</a></li>
                 </ul>
             </div>
         </div>
@@ -170,6 +170,7 @@
         // Ambil parameter tahun dari URL
         const urlParams = new URLSearchParams(window.location.search);
         const tahun = urlParams.get('tahun');
+        document.getElementById('editDeleteLink').href = `kumulatif-edit-delete.html?tahun=${tahun}`;
 
         // Periksa status login
         const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';

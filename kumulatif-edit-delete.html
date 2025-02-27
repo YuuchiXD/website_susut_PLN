@@ -97,7 +97,7 @@
 
     <!-- Konten Utama -->
     <div class="container mt-4">
-        <h2 class="text-center">📋 Tabel Data Kumulatif Susut</h2>
+        <h2 class="text-center">📋 Tabel Data Kumulatif Susut Tahun <span id="tahunTitle"></span></h2>
         
         <!-- Filter Tabel -->
         <div class="mb-3">
@@ -112,6 +112,7 @@
                 <option value="ULP Perbaungan">ULP Perbaungan</option>
                 <option value="UP3 Pakam">UP3 Lubuk Pakam</option>
             </select>
+            <button class="btn btn-danger mt-2" onclick="deleteAllData()">Hapus Semua Data ULP</button>
         </div>
 
         <table class="table table-hover table-bordered table-striped">
@@ -139,7 +140,74 @@
 
     <!-- Tombol Kembali -->
     <div class="container mt-4 text-center">
-        <button onclick="history.back()" class="btn btn-back w-100 mb-2">Kembali</button>
+        <button onclick="goBackAndRefresh()" class="btn btn-back w-100 mb-2">Kembali</button>
+    </div>
+
+    <!-- Modal Konfirmasi Hapus -->
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteModalLabel">Konfirmasi Hapus</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Apakah Anda yakin ingin menghapus semua data untuk <span id="ulpToDelete"></span>?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteButton">Hapus</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Edit Data -->
+    <div class="modal fade" id="editDataModal" tabindex="-1" aria-labelledby="editDataModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editDataModalLabel">Edit Data</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="editBulan" class="form-label">Bulan (1-12)</label>
+                        <input type="number" class="form-control" id="editBulan" min="1" max="12">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editJumlahSusut" class="form-label">Jumlah Susut (MW)</label>
+                        <input type="number" step="0.01" class="form-control" id="editJumlahSusut">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" id="confirmEditButton">Simpan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Hapus Data -->
+    <div class="modal fade" id="deleteDataModal" tabindex="-1" aria-labelledby="deleteDataModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteDataModalLabel">Hapus Data</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="deleteBulan" class="form-label">Bulan (1-12)</label>
+                        <input type="number" class="form-control" id="deleteBulan" min="1" max="12">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteDataButton">Hapus</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Bootstrap JS -->
@@ -151,6 +219,7 @@
         // Ambil parameter tahun dari URL
         const urlParams = new URLSearchParams(window.location.search);
         const tahun = urlParams.get('tahun');
+        document.getElementById('tahunTitle').textContent = tahun;
 
         // Periksa status login
         const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
@@ -180,17 +249,69 @@
         }
 
         function editData(ulp) {
-            const tahun = urlParams.get('tahun');
-            window.location.href = `kumulatif-input.html?ulp=${ulp}&tahun=${tahun}`;
+            const editDataModal = new bootstrap.Modal(document.getElementById('editDataModal'));
+            editDataModal.show();
+
+            document.getElementById('confirmEditButton').onclick = function() {
+                const bulan = document.getElementById('editBulan').value;
+                const newJumlahSusut = document.getElementById('editJumlahSusut').value;
+                if (bulan >= 1 && bulan <= 12 && newJumlahSusut !== '') {
+                    const dataToEdit = kumulatifData[tahun][ulp];
+                    if (dataToEdit) {
+                        const bulanKey = Object.keys(dataToEdit)[bulan - 1];
+                        dataToEdit[bulanKey] = parseFloat(newJumlahSusut);
+                        localStorage.setItem('kumulatifData', JSON.stringify(kumulatifData));
+                        renderTable(document.getElementById('tableFilter').value);
+                        editDataModal.hide();
+                    }
+                }
+            };
         }
 
         function deleteData(ulp) {
-            const tahun = urlParams.get('tahun');
-            if (confirm(`Apakah Anda yakin ingin menghapus data kumulatif untuk ${ulp} tahun ${tahun}?`)) {
+            const deleteDataModal = new bootstrap.Modal(document.getElementById('deleteDataModal'));
+            deleteDataModal.show();
+
+            document.getElementById('confirmDeleteDataButton').onclick = function() {
+                const bulan = document.getElementById('deleteBulan').value;
+                if (bulan >= 1 && bulan <= 12) {
+                    const dataToDelete = kumulatifData[tahun][ulp];
+                    if (dataToDelete) {
+                        const bulanKey = Object.keys(dataToDelete)[bulan - 1];
+                        delete dataToDelete[bulanKey];
+                        localStorage.setItem('kumulatifData', JSON.stringify(kumulatifData));
+                        renderTable(document.getElementById('tableFilter').value);
+                        deleteDataModal.hide();
+                        alert(`Data untuk ${ulp} bulan ${bulan} telah dihapus.`);
+                    }
+                }
+            };
+        }
+
+        function deleteAllData() {
+            const ulp = document.getElementById('tableFilter').value;
+            if (ulp === 'all') {
+                alert('Pilih ULP/UP terlebih dahulu.');
+                return;
+            }
+            document.getElementById('ulpToDelete').textContent = ulp;
+            const confirmDeleteModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+            confirmDeleteModal.show();
+
+            document.getElementById('confirmDeleteButton').onclick = function() {
                 delete kumulatifData[tahun][ulp];
                 localStorage.setItem('kumulatifData', JSON.stringify(kumulatifData));
                 renderTable(document.getElementById('tableFilter').value);
-            }
+                confirmDeleteModal.hide();
+                alert(`Semua data untuk ${ulp} telah dihapus.`);
+            };
+        }
+
+        function goBackAndRefresh() {
+            window.history.back();
+            setTimeout(() => {
+                window.location.reload();
+            }, 100);
         }
 
         document.getElementById('tableFilter').addEventListener('change', function() {
