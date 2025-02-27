@@ -9,8 +9,8 @@
   <style>
     .bg-pln { background-color: #007AC2; }
     .text-pln { color: #FFD700; }
-    .btn-pln { background-color: #FFD700; color: #007AC2; }
-    .btn-pln:hover { background-color: #ffcc00; }
+    .btn-pln { background-color: #FFD700; color: #007AC2; transition: background-color 0.3s ease, transform 0.3s ease; }
+    .btn-pln:hover { background-color: #ffcc00; transform: scale(1.05); }
     .marquee {
       white-space: nowrap;
       overflow: hidden;
@@ -48,6 +48,11 @@
       color: #333;
       opacity: 0;
       transform: translateY(20px);
+      transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    }
+    .text-box.visible {
+      opacity: 1;
+      transform: translateY(0);
     }
     .animate-pop-in {
       animation: popIn 0.8s ease-out forwards;
@@ -136,15 +141,15 @@
 
   <main class="relative w-full h-screen flex flex-col items-center justify-center px-4">
  
-    <div class="text-box animate-pop-in">
+    <div class="text-box" id="text-box-1">
       <h1 class="gradient-text shadow-text text-4xl mb-4">Selamat Datang di Sistem Susut PLN!</h1>
       <p class="text-gray-700">Sistem ini dirancang untuk memantau dan menganalisis data susut energi listrik secara real-time.</p>
     </div>
-    <div class="text-box animate-pop-in delay-1">
+    <div class="text-box" id="text-box-2">
       <h2 class="gradient-text shadow-text text-3xl mb-4">Transparan dan Akurat</h2>
       <p class="text-gray-700">Dikelola langsung oleh PT. PLN UP3 Lubuk Pakam, Divisi Transaksi Energi Listrik.</p>
     </div>
-    <div class="text-box animate-pop-in delay-2">
+    <div class="text-box" id="text-box-3">
       <h2 class="gradient-text shadow-text text-3xl mb-4">Monitoring & Analisis</h2>
       <p class="text-gray-700">Sebagai media untuk monitoring dan analisis data susut kelistrikan.</p>
     </div>
@@ -188,6 +193,13 @@
       closeModalBtn.addEventListener('click', function() {
         welcomeModal.classList.remove('active');
         modalOverlay.classList.remove('active');
+      });
+
+      const textBoxes = document.querySelectorAll('.text-box');
+      textBoxes.forEach((box, index) => {
+        setTimeout(() => {
+          box.classList.add('visible');
+        }, index * 300);
       });
     });
   </script>

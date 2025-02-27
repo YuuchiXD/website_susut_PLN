@@ -16,6 +16,11 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             padding: 2rem;
             margin-bottom: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
         }
         h1 {
             color: #2575fc;
@@ -46,13 +51,21 @@
             border-radius: 25px;
             color: white;
             margin-bottom: 2rem;
+            transition: background-color 0.3s ease, transform 0.3s ease;
         }
         .btn-back:hover {
             background: linear-gradient(135deg, #2575fc, #6a11cb);
+            transform: scale(1.05);
         }
         .nav-link.active {
             font-weight: bold;
             color: #FFD700 !important;
+        }
+        .btn-primary, .btn-secondary, .btn-back {
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        .btn-primary:hover, .btn-secondary:hover, .btn-back:hover {
+            transform: scale(1.05);
         }
         @media (max-width: 768px) {
             .card {

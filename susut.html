@@ -19,6 +19,11 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             padding: 2rem;
             text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
         }
         .btn-primary {
             background: linear-gradient(135deg, #6a11cb, #2575fc);
@@ -26,9 +31,11 @@
             padding: 10px 20px;
             font-size: 1.2rem;
             border-radius: 25px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
         }
         .btn-primary:hover {
             background: linear-gradient(135deg, #2575fc, #6a11cb);
+            transform: scale(1.05);
         }
         .btn-secondary {
             background: #6c757d;
@@ -37,9 +44,11 @@
             font-size: 1rem;
             border-radius: 25px;
             color: white;
+            transition: background-color 0.3s ease, transform 0.3s ease;
         }
         .btn-secondary:hover {
             background: #5a6268;
+            transform: scale(1.05);
         }
         .btn-back {
             background: linear-gradient(135deg, #6a11cb, #2575fc);
@@ -49,9 +58,11 @@
             border-radius: 25px;
             color: white;
             margin-top: 1rem;
+            transition: background-color 0.3s ease, transform 0.3s ease;
         }
         .btn-back:hover {
             background: linear-gradient(135deg, #2575fc, #6a11cb);
+            transform: scale(1.05);
         }
     </style>
 </head>
