@@ -69,17 +69,7 @@
 <body>
     <div class="card">
         <h1 class="mb-4">📅 Pilih Tahun Susut</h1>
-        <select id="tahunSelect" class="form-select mb-4">
-            <option value="2025">2025</option>
-            <option value="2024">2024</option>
-            <option value="2023">2023</option>
-            <option value="2022">2022</option>
-            <option value="2021">2021</option>
-            <option value="2020">2020</option>
-            <option value="2019">2019</option>
-            <option value="2018">2018</option>
-            <option value="2017">2017</option>
-        </select>
+        <select id="tahunSelect" class="form-select mb-4"></select>
         <button id="lihatData" class="btn btn-primary mb-4">Lihat Data Susut</button>
         
         <h2 class="mb-4">Tambah Tahun Baru</h2>
@@ -90,18 +80,30 @@
     </div>
 
     <script>
+        const tahunSelect = document.getElementById('tahunSelect');
+        const storedYears = JSON.parse(localStorage.getItem('years')) || [2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017];
+
+        function populateYearOptions() {
+            tahunSelect.innerHTML = '';
+            storedYears.sort((a, b) => b - a).forEach(year => {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                tahunSelect.appendChild(option);
+            });
+        }
+
         document.getElementById('lihatData').addEventListener('click', function() {
-            const tahun = document.getElementById('tahunSelect').value;
+            const tahun = tahunSelect.value;
             window.location.href = `tahun-susut.html?tahun=${tahun}`;
         });
 
         document.getElementById('tambahTahun').addEventListener('click', function() {
-            const tahunBaru = document.getElementById('tahunBaru').value;
-            if (tahunBaru && !document.querySelector(`#tahunSelect option[value="${tahunBaru}"]`)) {
-                const option = document.createElement('option');
-                option.value = tahunBaru;
-                option.textContent = tahunBaru;
-                document.getElementById('tahunSelect').appendChild(option);
+            const tahunBaru = parseInt(document.getElementById('tahunBaru').value);
+            if (tahunBaru && !storedYears.includes(tahunBaru)) {
+                storedYears.push(tahunBaru);
+                localStorage.setItem('years', JSON.stringify(storedYears));
+                populateYearOptions();
                 document.getElementById('tahunBaru').value = '';
                 alert(`Tahun ${tahunBaru} berhasil ditambahkan!`);
             } else {
@@ -112,6 +114,8 @@
         document.getElementById('kembali').addEventListener('click', function() {
             history.back();
         });
+
+        populateYearOptions();
     </script>
 </body>
 </html>
